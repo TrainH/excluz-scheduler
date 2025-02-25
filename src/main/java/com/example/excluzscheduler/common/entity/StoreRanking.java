@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,7 +48,7 @@ public class StoreRanking {
 	// 매출 타입 (D, M, Y)
 	@Comment("매출 타입")
 	@Enumerated(EnumType.STRING)
-	private Period period;
+	private RevenuePeriod rankingPeriod;
 
 	// 랭킹 날짜
 	@LastModifiedDate
@@ -63,9 +65,9 @@ public class StoreRanking {
 
 	// 생성자: 매개변수 4개 이상은 빌더 패턴 사용
 	@Builder
-	public StoreRanking(Store store, Period period, Integer rankPosition, Long revenue) {
+	public StoreRanking(Store store, RevenuePeriod rankingPeriod, Integer rankPosition, Long revenue) {
 		this.store = store;
-		this.period = period;
+		this.rankingPeriod = rankingPeriod;
 		this.rankDate = LocalDateTime.now();
 		this.rankPosition = rankPosition;
 		this.revenue = revenue;
