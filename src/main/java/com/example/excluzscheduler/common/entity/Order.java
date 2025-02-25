@@ -1,0 +1,31 @@
+package com.example.excluzscheduler.common.entity;
+
+import com.example.excluzscheduler.domain.order.order.enums.OrderStatus;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Table(name = "orders")
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class Order extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @Column(nullable = false, length = 100)
+    private String address;
+
+}
