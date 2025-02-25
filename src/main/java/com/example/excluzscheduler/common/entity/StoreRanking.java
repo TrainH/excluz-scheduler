@@ -1,4 +1,73 @@
 package com.example.excluzscheduler.common.entity;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.Comment;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@Entity
+@Table(name="store_rankings")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreRanking {
+
+	// StoreRanking 식별자
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+
+	// store 식별자(외래키)
+	@ManyToOne(
+		fetch = FetchType.LAZY,
+		optional = false // store가 항상 필수 필드인 것을 명시
+	)
+	@JoinColumn(
+		name = "store_id",
+		nullable = false
+	)
+	private Store store;
+
+	// 매출 타입 (D, M, Y)
+	@Comment("매출 타입")
+	@Enumerated(EnumType.STRING)
+	private Period period;
+
+	// 랭킹 날짜
+	@LastModifiedDate
+	@Column(name = "rank_date", nullable = false)
+	private LocalDateTime rankDate;
+
+	// 랭킹 순위
+	@Column(name = "rank_position", nullable = false)
+	private Integer rankPosition;
+
+	// 매출
+	@Column(name = "revenue", nullable = false)
+	private Long revenue;
+
+	// 생성자: 매개변수 4개 이상은 빌더 패턴 사용
+	@Builder
+	public StoreRanking(Store store, Period period, Integer rankPosition, Long revenue) {
+		this.store = store;
+		this.period = period;
+		this.rankDate = LocalDateTime.now();
+		this.rankPosition = rankPosition;
+		this.revenue = revenue;
+	}
 }
