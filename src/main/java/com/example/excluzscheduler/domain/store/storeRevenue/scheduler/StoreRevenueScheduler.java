@@ -1,23 +1,32 @@
 package com.example.excluzscheduler.domain.store.storeRevenue.scheduler;
 
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
+import com.example.excluzscheduler.domain.store.storeRevenue.service.StoreRevenueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.scheduling.annotation.Scheduled;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class StoreRevenueScheduler {
 
-//    private final StoreRevenueService storeRevenueService;
-//
-//    // 매일 자정(00:00:00)에 실행
-//    @Scheduled(cron = "0 0 0 * * ?")
-//    public void collectDailyRevenue() {
-//        log.info("📊 스토어 매출 데이터 수집 시작...");
-//
-//        storeRevenueService.saveRevenue(revenue);
-//        log.info("✅ 매출 데이터 저장 완료: {}", revenue);
-//    }
+    private final StoreRevenueService storeRevenueService;
+
+    public void createDailyRevenue() {
+
+        log.info("Create daily revenue");
+
+        RevenuePeriod revenuePeriod = RevenuePeriod.D;
+        LocalDateTime startDate = LocalDate.now().minusDays(1).atStartOfDay();
+        LocalDateTime endDate = LocalDate.now().atStartOfDay();
+
+        storeRevenueService.createRevenue(revenuePeriod, startDate, endDate);
+
+        log.info("Finish daily revenue");
+
+    }
 }
