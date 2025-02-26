@@ -31,11 +31,11 @@ public class StoreRevenue {
     @Column(name = "revenue_period", nullable = false)
     private RevenuePeriod revenuePeriod;
 
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    @Column(name = "start_datetime", nullable = false)
+    private LocalDateTime startDatetime;
 
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    @Column(name = "end_datetime", nullable = false)
+    private LocalDateTime endDatetime;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -46,13 +46,13 @@ public class StoreRevenue {
             Integer storeId,
             Long totalRevenue,
             RevenuePeriod revenuePeriod,
-            LocalDate startDate,
-            LocalDate endDate
+            LocalDateTime startDatetime,
+            LocalDateTime endDatetime
     ) {
         this.storeId = storeId;
         this.totalRevenue = totalRevenue;
         this.revenuePeriod = revenuePeriod;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.startDatetime = startDatetime;
+        this.endDatetime = endDatetime;
     }
 }
