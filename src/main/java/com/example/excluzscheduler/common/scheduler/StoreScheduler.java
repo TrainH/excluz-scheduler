@@ -1,19 +1,24 @@
 package com.example.excluzscheduler.common.scheduler;
 
+import com.example.excluzscheduler.domain.store.storeRevenue.scheduler.StoreRevenueScheduler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StoreScheduler {
-//    통합적으로 실행
-//    private final StoreService storeService;
-//
-//    @Scheduled(cron = "0 0 9 * * ?") // 매일 오전 9시에 실행
-//    public void updateStoreRanking() {
-//        System.out.println("🔹 스토어 랭킹 업데이트 실행");
-//
-//
-//    }
+
+    private final StoreRevenueScheduler storeRevenueScheduler;
+
+    // 매일 00:00:00 (자정) 실행 ("0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void scheduleStore() {
+        log.info("start store scheduler");
+        storeRevenueScheduler.createDailyRevenue();
+
+        log.info("finish store scheduler");
+    }
 }

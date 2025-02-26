@@ -44,6 +44,7 @@ dependencies {
     // 5. 유효성 검사 및 Lombok 관련
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
