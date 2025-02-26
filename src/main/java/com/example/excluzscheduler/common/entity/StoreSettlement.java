@@ -72,11 +72,4 @@ public class StoreSettlement {
 		this.settlementStatus=SettlementStatus.PENDING;
 		this.updatedAt=LocalDateTime.now();
 	}
-
-	/* TODO 정산 완료 상태일 경우 이전 상태로 못 돌아가도록 기능 추가 필요 */
-	public void updateSettlementStatus(SettlementStatus settlementStatus) {
-		this.settlementStatus = settlementStatus;
-		this.updatedAt=LocalDateTime.now(); // 정산 상태 변경시 시간도 같이 업데이트
-	}
-
 }
