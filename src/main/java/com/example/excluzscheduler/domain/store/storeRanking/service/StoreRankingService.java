@@ -29,9 +29,9 @@ public class StoreRankingService {
 	private final StoreRankingRepository storeRankingRepository;
 	private final StoreRepository storeRepository;
 
-	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
+	// 매일 자정마다 호출 (TOP 10 랭킹 업데이트)
 	public void updateDailyStoreRankings() {
-		log.info("🟢 일간 랭킹 업데이트 시작");
+		log.info("☎️ 일간 랭킹 업데이트 호출 시작");
 
 		RevenuePeriod rankingPeriod = RevenuePeriod.D; // 일간 매출 기준 랭킹
 		LocalDateTime startDate = LocalDate.now().minusDays(1).atStartOfDay();
@@ -39,7 +39,7 @@ public class StoreRankingService {
 
 		createDailyRanking(rankingPeriod, startDate, endDate);
 
-		log.info("✅ 일간 랭킹 업데이트 완료!");
+		log.info("✅ 일간 랭킹 업데이트 호출 완료!");
 	}
 
 	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
@@ -101,7 +101,7 @@ public class StoreRankingService {
 			currentRank++;
 		}
 
-		log.info("✅ 일간 랭킹 업데이트 완료");
+		log.info("✅ 매출 기준 TOP10 가져오기 완료!");
 	}
 
 	// TOP 10 랭킹 조회 (매출 정보 제외)
