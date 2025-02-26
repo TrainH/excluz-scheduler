@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Comment;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class) // @LastModifiedDate는 Spring Data JPA의 AuditingEntityListener를 활성화해야 적용됨
 @Table(name="store_rankings")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreRanking {
