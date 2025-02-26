@@ -13,10 +13,10 @@ public interface PointTransactionRepository extends JpaRepository<PointTransacti
             "JOIN FETCH pt.order " +
             "JOIN FETCH pt.user " +
             "JOIN FETCH pt.store " +
-            "WHERE :startDate <= pt.createdAt AND pt.createdAt < :endDate " +
+            "WHERE :startDatetime <= pt.createdAt AND pt.createdAt < :endDatetime " +
             "AND pt.transactionType IN (:transactionTypeList)")
     List<PointTransaction> findAllByDateRangeAndTransactionType(
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
+            @Param("startDatetime") LocalDateTime startDatetime,
+            @Param("endDatetime") LocalDateTime endDatetime,
             @Param("transactionTypeList") List<TransactionType> transactionTypeList);
 }
