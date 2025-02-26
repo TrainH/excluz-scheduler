@@ -14,12 +14,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,9 +33,8 @@ public class StoreSettlement {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "store_id")
-	private Store store;
+	@Column(name = "store_id")
+	private Integer storeId;
 
 	@Column(name = "settlements_period", nullable = false)
 	private LocalDate settlementPeriod; // 정산 내역 생성일
@@ -63,31 +59,24 @@ public class StoreSettlement {
 
 	@Builder
 	public StoreSettlement(
-		Store store,
+		Integer storeId,
 		Long totalRevenue,
 		FeeRate platformFeeRate,
-		Long settlementAmount,
-		LocalDateTime updatedAt
+		Long settlementAmount
 	) {
-		this.store=store;
+		this.storeId=storeId;
 		this.settlementPeriod=LocalDate.now();
 		this.totalRevenue=totalRevenue;
-		this.platformFeeRate=platformFeeRate;
+		this.platformFeeRate= platformFeeRate;
 		this.settlementAmount=settlementAmount;
 		this.settlementStatus=SettlementStatus.PENDING;
-		this.updatedAt=updatedAt;
-	}
-
-	public void updatePlatformFeeRate(FeeRate platformFeeRate) {
-		this.platformFeeRate = platformFeeRate;
+		this.updatedAt=LocalDateTime.now();
 	}
 
 	/* TODO 정산 완료 상태일 경우 이전 상태로 못 돌아가도록 기능 추가 필요 */
 	public void updateSettlementStatus(SettlementStatus settlementStatus) {
 		this.settlementStatus = settlementStatus;
+		this.updatedAt=LocalDateTime.now(); // 정산 상태 변경시 시간도 같이 업데이트
 	}
 
-	public void setUpdatedTime(LocalDateTime updatedAt) {
-		this.updatedAt=updatedAt;
-	}
 }
