@@ -72,4 +72,11 @@ public class StoreRanking {
 		this.rankPosition = rankPosition;
 		this.revenue = revenue;
 	}
+
+	// 기존 랭킹 업데이트 메서드 추가
+	public void updateRank(Integer rankPosition, Long revenue) {
+		this.rankPosition = rankPosition;
+		this.revenue = revenue;
+		this.rankDate = LocalDateTime.now();
+	}
 }
