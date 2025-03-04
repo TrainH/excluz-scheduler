@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "store_settlement")
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class StoreSettlement {
+public class StoreSettlement extends BaseEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,9 +35,6 @@ public class StoreSettlement {
 
 	@Column(name = "store_id")
 	private Integer storeId;
-
-	@Column(name = "settlements_period", nullable = false)
-	private LocalDate settlementPeriod; // 정산 내역 생성일
 
 	@Column(name = "total_revenue", nullable = false)
 	private Long totalRevenue;
@@ -53,9 +50,12 @@ public class StoreSettlement {
 	@Enumerated(EnumType.STRING)
 	private SettlementStatus settlementStatus; // 정산 상태
 
-	@LastModifiedDate
-	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
+	// 정산 기간(범위): startDate ~ endDate
+	@Column(name = "start_date", nullable = false)
+	private LocalDateTime startDate;
+
+	@Column(name = "end_date", nullable = false)
+	private LocalDateTime endDate;
 
 	@Builder
 	public StoreSettlement(
@@ -65,11 +65,9 @@ public class StoreSettlement {
 		Long settlementAmount
 	) {
 		this.storeId=storeId;
-		this.settlementPeriod=LocalDate.now();
 		this.totalRevenue=totalRevenue;
 		this.platformFeeRate= platformFeeRate;
 		this.settlementAmount=settlementAmount;
-		this.settlementStatus=SettlementStatus.PENDING;
-		this.updatedAt=LocalDateTime.now();
+		this.settlementStatus=SettlementStatus.WAITING;
 	}
 }
