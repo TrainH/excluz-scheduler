@@ -30,14 +30,10 @@ public class StoreRankingService {
 	private final StoreRepository storeRepository;
 
 	// 매일 자정마다 호출 (TOP 10 랭킹 업데이트)
-	public void updateDailyStoreRankings() {
+	public void updateDailyStoreRankings(RevenuePeriod rankingPeriod, LocalDateTime startDatetime, LocalDateTime endDatetime) {
 		log.info("☎️ 일간 랭킹 업데이트 호출 시작");
 
-		RevenuePeriod rankingPeriod = RevenuePeriod.D; // 일간 매출 기준 랭킹
-		LocalDateTime startDate = LocalDate.now().minusDays(1).atStartOfDay();
-		LocalDateTime endDate = LocalDate.now().atStartOfDay();
-
-		createDailyRanking(rankingPeriod, startDate, endDate);
+		createDailyRanking(rankingPeriod, startDatetime, endDatetime);
 
 		log.info("✅ 일간 랭킹 업데이트 호출 완료!");
 	}
@@ -52,7 +48,7 @@ public class StoreRankingService {
 		log.info("🔍 매출 기준 TOP10 가져오는 중...");
 
 		// 어제 매출 기준으로 TOP 10 스토어 조회
-		List<StoreRevenue> topStores = storeRevenueRepository.findStoresByRevenue(startDate.toLocalDate(), endDate.toLocalDate());
+		List<StoreRevenue> topStores = storeRevenueRepository.findStoresByRevenue(startDate, endDate);
 
 		if (topStores.isEmpty()) {
 			log.info("⚠️ 매출 데이터가 없습니다. 랭킹을 업데이트하지 않습니다.");
@@ -107,7 +103,7 @@ public class StoreRankingService {
 	// TOP 10 랭킹 조회 (매출 정보 제외)
 	@Transactional(readOnly = true)
 	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings() {
-		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.D, PageRequest.of(0, 10))
+		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.MINUTE_1, PageRequest.of(0, 10))
 			.getContent()
 			.stream()
 			.map(ranking -> new StoreRankingTop10ResponseDto(
