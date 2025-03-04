@@ -1,4 +1,25 @@
 package com.example.excluzscheduler.domain.store.storeRanking.repository;
 
-public class StoreRankingRepository {
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.example.excluzscheduler.common.entity.Store;
+import com.example.excluzscheduler.common.entity.StoreRanking;
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
+
+@Repository
+public interface StoreRankingRepository extends JpaRepository<StoreRanking, Long> {
+
+	// 기존 랭킹 존재 여부 확인
+	Optional<StoreRanking> findByStoreAndRankingPeriod(Store store, RevenuePeriod rankingPeriod);
+
+	// TOP 10 랭킹 조회 (매출 정보 없이 반환)
+	@Query("SELECT sr FROM StoreRanking sr WHERE sr.rankingPeriod = :period ORDER BY sr.rankPosition ASC")
+	Page<StoreRanking> findTop10ByRankingPeriod(@Param("period") RevenuePeriod period, Pageable pageable);
 }

@@ -1,38 +1,41 @@
 package com.example.excluzscheduler.common.scheduler;
 
-import com.example.excluzscheduler.domain.store.storeRevenue.scheduler.StoreRevenueScheduler;
-import com.example.excluzscheduler.domain.store.storeSettlement.scheduler.StoreSettlementScheduler;
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
+import com.example.excluzscheduler.domain.store.storeRanking.service.StoreRankingService;
+import com.example.excluzscheduler.domain.store.storeRevenue.service.StoreRevenueService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class StoreScheduler {
 
-    private final StoreRevenueScheduler storeRevenueScheduler;
-    private final StoreSettlementScheduler storeSettlementScheduler;
 
-    // 매일 00:00:00 (자정) 실행 ("0 0 0 * * ?")
-    @Scheduled(cron = "0 0 0 * * ?")
+    private final StoreRevenueService storeRevenueService;
+    private final StoreRankingService storeRankingService;
+
+    @Scheduled(fixedDelay = 30000) // 로직 작업 끝나고 30초 뒤 로직 돌아감
+
     public void scheduleStore() {
+
+        LocalDateTime nowDatetime = LocalDateTime.now();
+        RevenuePeriod revenuePeriod = RevenuePeriod.MINUTE_1; // 테스트할 기간 선택
+
+        LocalDateTime startDatetime = revenuePeriod.getStartDatetime(nowDatetime);
+        LocalDateTime endDatetime = revenuePeriod.getEndDatetime(nowDatetime);
+
         log.info("start store scheduler");
 
-        storeRevenueScheduler.createDailyRevenue();
+        storeRevenueService.createRevenue(revenuePeriod, startDatetime, endDatetime);
+        storeRankingService.updateDailyStoreRankings(revenuePeriod, startDatetime, endDatetime);
 
         log.info("finish store scheduler");
     }
 
-    // 매달 1일 자정 실행
-    @Scheduled(cron = "0 0 0 1 * ?")
-    public void scheduleStoreMonthly() {
-        log.info("start store scheduler monthly");
-
-        storeSettlementScheduler.createSettlement();
-
-        log.info("finish store scheduler monthly");
-    }
 }

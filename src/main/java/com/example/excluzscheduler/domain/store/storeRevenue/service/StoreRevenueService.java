@@ -25,13 +25,17 @@ public class StoreRevenueService {
     private final PointTransactionRepository pointTransactionRepository;
 
     @Transactional
-    public void createRevenue(RevenuePeriod revenuePeriod, LocalDateTime startDate, LocalDateTime endDate) {
+    public void createRevenue(RevenuePeriod revenuePeriod, LocalDateTime startDatetime, LocalDateTime endDatetime) {
+        log.info("Create {} revenue", revenuePeriod.name());
 
+        // 구매 / 환불
         List<TransactionType> transactionTypeList = List.of(TransactionType.PURCHASE, TransactionType.REFUND);
 
+        // 포인트 거래내역 불러오기
         List<PointTransaction> pointTransactionList = pointTransactionRepository
-                .findAllByDateRangeAndTransactionType(startDate, endDate, transactionTypeList);
+                .findAllByDateRangeAndTransactionType(startDatetime, endDatetime, transactionTypeList);
 
+        // 스토어 아이디별로 구매는 +, 환불은 - 해서 합산
         Map<Integer, Integer> revenueByStoreId = pointTransactionList.stream()
                 .filter(pt -> pt.getStore() != null)
                 .collect(Collectors.groupingBy(
@@ -41,17 +45,20 @@ public class StoreRevenueService {
                         )
                 ));
 
+        // 리스트에 시간정보 넣기
         List<StoreRevenue> storeRevenueList = revenueByStoreId.entrySet().stream()
                 .map(entry -> StoreRevenue.builder()
                         .storeId(entry.getKey())
                         .totalRevenue(entry.getValue().longValue())
                         .revenuePeriod(revenuePeriod)
-                        .startDate(startDate.toLocalDate())
-                        .endDate(endDate.toLocalDate())
+                        .startDatetime(startDatetime)
+                        .endDatetime(endDatetime)
                         .build()
                 )
                 .toList();
 
         storeRevenueRepository.saveAll(storeRevenueList);
+
+        log.info("Finish {} revenue", revenuePeriod.name());
     }
 }
