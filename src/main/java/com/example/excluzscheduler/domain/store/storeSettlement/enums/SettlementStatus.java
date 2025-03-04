@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum SettlementStatus {
-	PENDING("출금 요청 전"),
+	WAITING("출금 요청 전"),
+	HOLD("출금 보류"),
 	PROCESSING("스트리머 출금 요청"),
 	COMPLETED("출금 완료");
 
