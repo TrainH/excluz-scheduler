@@ -1,6 +1,5 @@
 package com.example.excluzscheduler.domain.store.storeRanking.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,29 +29,16 @@ public class StoreRankingService {
 	private final StoreRepository storeRepository;
 
 	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
-	public void updateDailyStoreRankings() {
-		log.info("🟢 일간 랭킹 업데이트 시작");
-
-		RevenuePeriod rankingPeriod = RevenuePeriod.D; // 일간 매출 기준 랭킹
-		LocalDateTime startDate = LocalDate.now().minusDays(1).atStartOfDay();
-		LocalDateTime endDate = LocalDate.now().atStartOfDay();
-
-		createDailyRanking(rankingPeriod, startDate, endDate);
-
-		log.info("✅ 일간 랭킹 업데이트 완료!");
-	}
-
-	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
 	/**
 	 * 1. 매출이 동일할 경우 동일한 등수로 표시
 	 * 2. 매출이 동일하지 않은 이후 스토어가 있는 경우, (동일한 등수 + 동일한 스토어의 수) 만큼의 등수를 얻는다 -> 1등이 2개면, 다음 등수는 3등 처리
- 	 */
+	 */
 	@Transactional
-	public void createDailyRanking(RevenuePeriod rankingPeriod, LocalDateTime startDate, LocalDateTime endDate) {
+	public void updateDailyStoreRankings(RevenuePeriod rankingPeriod, LocalDateTime startDatetime, LocalDateTime endDatetime) {
 		log.info("🔍 매출 기준 TOP10 가져오는 중...");
 
 		// 어제 매출 기준으로 TOP 10 스토어 조회
-		List<StoreRevenue> topStores = storeRevenueRepository.findStoresByRevenue(startDate.toLocalDate(), endDate.toLocalDate());
+		List<StoreRevenue> topStores = storeRevenueRepository.findStoresByRevenue(startDatetime, endDatetime);
 
 		if (topStores.isEmpty()) {
 			log.info("⚠️ 매출 데이터가 없습니다. 랭킹을 업데이트하지 않습니다.");
@@ -101,13 +87,13 @@ public class StoreRankingService {
 			currentRank++;
 		}
 
-		log.info("✅ 일간 랭킹 업데이트 완료");
+		log.info("✅ 매출 기준 TOP10 가져오기 완료!");
 	}
 
 	// TOP 10 랭킹 조회 (매출 정보 제외)
 	@Transactional(readOnly = true)
 	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings() {
-		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.D, PageRequest.of(0, 10))
+		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.MINUTE_1, PageRequest.of(0, 10))
 			.getContent()
 			.stream()
 			.map(ranking -> new StoreRankingTop10ResponseDto(
