@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class StoreRankingController {
 	private final StoreRankingService storeRankingService;
 
-	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
+	// TOP 10 랭킹 조회
 	@GetMapping("/top10")
 	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings() {
 		return storeRankingService.getTop10StoreRankings();
