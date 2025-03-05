@@ -16,12 +16,12 @@ public interface StoreRevenueRepository extends JpaRepository<StoreRevenue, Inte
 	@Query("SELECT sr FROM StoreRevenue sr WHERE sr.id.startDatetime >= :startDate AND sr.id.endDatetime < :endDate ORDER BY sr.totalRevenue DESC")
 	List<StoreRevenue> findStoresByRevenue(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-	@Query("SELECT sr.storeId, SUM(sr.totalRevenue) " +
+	@Query("SELECT sr.id.storeId, SUM(sr.totalRevenue) " +
 	"FROM StoreRevenue sr " +
-	"WHERE (sr.startDatetime = :startDateTime) " +
-	"AND (sr.endDatetime = :endDateTime) " +
-	"AND sr.revenuePeriod = :period " +
-	"GROUP BY sr.storeId")
+	"WHERE (sr.id.startDatetime = :startDateTime) " +
+	"AND (sr.id.endDatetime = :endDateTime) " +
+	"AND sr.id.revenuePeriod = :period " +
+	"GROUP BY sr.id.storeId")
 	List<Object[]> findTotalRevenueWithPeriod(
 		@Param("startDateTime") LocalDateTime startDateTime,
 		@Param("endDateTime") LocalDateTime endDateTime,
