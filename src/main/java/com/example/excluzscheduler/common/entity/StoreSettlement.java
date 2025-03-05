@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
 import com.example.excluzscheduler.domain.store.storeSettlement.enums.FeeRate;
 import com.example.excluzscheduler.domain.store.storeSettlement.enums.SettlementStatus;
-import com.example.excluzscheduler.domain.store.storeSettlement.enums.SettlementPeriod;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,7 +51,7 @@ public class StoreSettlement extends BaseEntity{
 
 	@Column(name = "settlement_period", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private SettlementPeriod settlementPeriod; // 정산 주기
+	private RevenuePeriod settlementPeriod; // 정산 주기
 
 	// 정산 기간(범위): startDate ~ endDate
 	@Column(name = "start_date", nullable = false)
@@ -66,7 +66,7 @@ public class StoreSettlement extends BaseEntity{
 		Long totalRevenue,
 		FeeRate platformFeeRate,
 		Long settlementAmount,
-		SettlementPeriod settlementPeriod,
+		RevenuePeriod settlementPeriod,
 		LocalDateTime startDate,
 		LocalDateTime endDate
 	) {
