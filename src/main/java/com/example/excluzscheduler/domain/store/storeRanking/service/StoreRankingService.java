@@ -38,9 +38,9 @@ public class StoreRankingService {
 		log.info("🔍 매출 기준 TOP10 가져오는 중...");
 
 		// 어제 매출 기준으로 TOP 10 스토어 조회
-		List<StoreRevenue> topStores = storeRevenueRepository.findStoresByRevenue(startDatetime, endDatetime);
+		List<StoreRevenue> storeRevenueListInDescendingOrder = storeRevenueRepository.findStoreRevenuesByPeriod(startDatetime, endDatetime);
 
-		if (topStores.isEmpty()) {
+		if (storeRevenueListInDescendingOrder.isEmpty()) {
 			log.info("⚠️ 매출 데이터가 없습니다. 랭킹을 업데이트하지 않습니다.");
 			return;
 		}
@@ -52,9 +52,9 @@ public class StoreRankingService {
 
 		int preStoreRank = currentRank;
 
-		for (StoreRevenue revenue : topStores) {
-			Store store = storeRepository.findById(revenue.getStoreId())
-				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스토어입니다.")); // todo 추후 커스텀 익셉션 처리
+		for (StoreRevenue revenue : storeRevenueListInDescendingOrder) {
+			Store store = storeRepository.findById(revenue.getStoreId()) // todo <- 계속 조회를 해 오기 때문에 속도 느림(N+1 개선 필요, 예외처리는 필요)
+				.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스토어입니다."));
 
 			int rank = currentRank;
 
@@ -63,7 +63,7 @@ public class StoreRankingService {
 			}
 
 			// 기존 랭킹 존재 여부 확인
-			StoreRanking existingRanking = storeRankingRepository.findByStoreAndRankingPeriod(store, rankingPeriod)
+			StoreRanking existingRanking = storeRankingRepository.findByStoreAndRankingPeriod(store, rankingPeriod) // todo 개선(N+1 문제 발생 가능) <- 조회 최소화시키기
 				.orElse(null);
 
 			if (existingRanking != null) {
@@ -78,7 +78,7 @@ public class StoreRankingService {
 					.revenue(revenue.getTotalRevenue())
 					.build();
 
-				storeRankingRepository.save(newRanking);
+				storeRankingRepository.save(newRanking); // todo 수정하기(N+1이라고 생각하기) <- 뭐든지 for문 밖에서 일어나게(DB 조회, 생성 등)
 			}
 
 			preStoreRevenue = revenue.getTotalRevenue();

@@ -13,5 +13,6 @@ public interface StoreRevenueRepository extends JpaRepository<StoreRevenue, Inte
 
 	// 매출 기준으로 스토어 조회
 	@Query("SELECT sr FROM StoreRevenue sr WHERE sr.startDatetime >= :startDate AND sr.endDatetime < :endDate ORDER BY sr.totalRevenue DESC")
-	List<StoreRevenue> findStoresByRevenue(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+	List<StoreRevenue> findStoreRevenuesByPeriod(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
 }
