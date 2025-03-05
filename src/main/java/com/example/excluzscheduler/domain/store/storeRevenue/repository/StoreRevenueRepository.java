@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.excluzscheduler.common.entity.StoreRevenue;
+import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,12 @@ public interface StoreRevenueRepository extends JpaRepository<StoreRevenue, Inte
 
 	@Query("SELECT sr.storeId, SUM(sr.totalRevenue) " +
 	"FROM StoreRevenue sr " +
-	"WHERE FUNCTION('MONTH', sr.startDate) = :prevMonth " +
+	"WHERE (sr.startDatetime = :startDateTime) " +
+	"AND (sr.endDatetime = :endDateTime) " +
+	"AND sr.revenuePeriod = :period " +
 	"GROUP BY sr.storeId")
-	List<Object[]> findMonthlyTotalRevenue(@Param("prevMonth") int prevMonth);
+	List<Object[]> findTotalRevenueWithPeriod(
+		@Param("startDateTime") LocalDateTime startDateTime,
+		@Param("endDateTime") LocalDateTime endDateTime,
+		@Param("period") RevenuePeriod period);
 }
