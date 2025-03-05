@@ -1,13 +1,12 @@
 package com.example.excluzscheduler.common.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.example.excluzscheduler.domain.store.storeSettlement.enums.FeeRate;
 import com.example.excluzscheduler.domain.store.storeSettlement.enums.SettlementStatus;
+import com.example.excluzscheduler.domain.store.storeSettlement.enums.SettlementPeriod;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,6 +49,10 @@ public class StoreSettlement extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private SettlementStatus settlementStatus; // 정산 상태
 
+	@Column(name = "settlement_period", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private SettlementPeriod settlementPeriod; // 정산 주기
+
 	// 정산 기간(범위): startDate ~ endDate
 	@Column(name = "start_date", nullable = false)
 	private LocalDateTime startDate;
@@ -62,12 +65,28 @@ public class StoreSettlement extends BaseEntity{
 		Integer storeId,
 		Long totalRevenue,
 		FeeRate platformFeeRate,
-		Long settlementAmount
+		Long settlementAmount,
+		SettlementPeriod settlementPeriod,
+		LocalDateTime startDate,
+		LocalDateTime endDate
 	) {
 		this.storeId=storeId;
 		this.totalRevenue=totalRevenue;
 		this.platformFeeRate= platformFeeRate;
 		this.settlementAmount=settlementAmount;
 		this.settlementStatus=SettlementStatus.WAITING;
+		this.settlementPeriod=settlementPeriod;
+		this.startDate=startDate;
+		this.endDate=endDate;
+	}
+
+	public void updateStoreSettlement(
+		Long totalRevenue,
+		FeeRate platformFeeRate,
+		Long settlementAmount
+	) {
+		if (totalRevenue != null) this.totalRevenue = totalRevenue;
+		if (platformFeeRate != null) this.platformFeeRate = platformFeeRate;
+		if (settlementAmount != null) this.settlementAmount = settlementAmount;
 	}
 }
