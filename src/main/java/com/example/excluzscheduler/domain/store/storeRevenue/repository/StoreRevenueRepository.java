@@ -12,10 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface StoreRevenueRepository extends JpaRepository<StoreRevenue, Integer> {
 
-	// 매출 기준으로 스토어 조회
-	@Query("SELECT sr FROM StoreRevenue sr WHERE sr.id.startDatetime >= :startDate AND sr.id.endDatetime < :endDate ORDER BY sr.totalRevenue DESC")
-	List<StoreRevenue> findStoreRevenuesByPeriod(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
-
+	// 특정 기간 동안 스토어별 매출 합산 조회
 	@Query("SELECT sr.id.storeId, SUM(sr.totalRevenue) " +
 	"FROM StoreRevenue sr " +
 	"WHERE (sr.id.startDatetime = :startDateTime) " +
