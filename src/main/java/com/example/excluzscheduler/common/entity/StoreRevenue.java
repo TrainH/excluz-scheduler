@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Table(name = "store_revenues")
@@ -17,25 +15,12 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 public class StoreRevenue {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
 
-    @Column(name = "store_id", nullable = false)
-    private Integer storeId;
+    @EmbeddedId
+    private StoreRevenueId id;
 
     @Column(name = "total_revenue", nullable = false)
     private Long totalRevenue;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "revenue_period", nullable = false)
-    private RevenuePeriod revenuePeriod;
-
-    @Column(name = "start_datetime", nullable = false)
-    private LocalDateTime startDatetime;
-
-    @Column(name = "end_datetime", nullable = false)
-    private LocalDateTime endDatetime;
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -44,15 +29,28 @@ public class StoreRevenue {
     @Builder
     public StoreRevenue(
             Integer storeId,
-            Long totalRevenue,
             RevenuePeriod revenuePeriod,
             LocalDateTime startDatetime,
-            LocalDateTime endDatetime
+            LocalDateTime endDatetime,
+            Long totalRevenue
     ) {
-        this.storeId = storeId;
+        this.id = new StoreRevenueId(storeId, revenuePeriod, startDatetime, endDatetime);
         this.totalRevenue = totalRevenue;
-        this.revenuePeriod = revenuePeriod;
-        this.startDatetime = startDatetime;
-        this.endDatetime = endDatetime;
+    }
+
+    public Integer getStoreId() {
+        return id.getStoreId();
+    }
+
+    public RevenuePeriod getRevenuePeriod() {
+        return id.getRevenuePeriod();
+    }
+
+    public LocalDateTime getStartDatetime() {
+        return id.getStartDatetime();
+    }
+
+    public LocalDateTime getEndDatetime() {
+        return id.getEndDatetime();
     }
 }
