@@ -4,15 +4,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 
-public enum RevenuePeriod {
-    MINUTE_1(ChronoUnit.MINUTES, 1),
-    MINUTE_2(ChronoUnit.MINUTES, 2),
-    MINUTE_10(ChronoUnit.MINUTES, 10),
-    HOUR_1(ChronoUnit.HOURS, 1),
-    DAY_1(ChronoUnit.DAYS, 1),
-    WEEK_1(ChronoUnit.WEEKS, 1),
-    MONTH_1(ChronoUnit.MONTHS, 1),
-    YEAR_1(ChronoUnit.YEARS, 1);
+    public enum RevenuePeriod {
+    DAY(ChronoUnit.DAYS, 1),
+    MONTH(ChronoUnit.MONTHS, 1),
+    YEAR(ChronoUnit.YEARS, 1);
 
     private final ChronoUnit unit;  // 시간 단위 (분, 시간, 일 등)
     private final long amount;       // 해당 단위의 기간 (1분, 2분, 1시간 등)
