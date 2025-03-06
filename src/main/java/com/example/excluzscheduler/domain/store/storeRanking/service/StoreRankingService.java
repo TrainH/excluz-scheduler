@@ -112,8 +112,8 @@ public class StoreRankingService {
 
 	// TOP 10 랭킹 조회 (매출 정보 제외)
 	@Transactional(readOnly = true)
-	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings() {
-		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.MONTH, PageRequest.of(0, 10))
+	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings(RevenuePeriod period) {
+		return storeRankingRepository.findTop10ByRankingPeriod(period, PageRequest.of(0, 10))
 			.getContent()
 			.stream()
 			.map(ranking -> new StoreRankingTop10ResponseDto(
