@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.excluzscheduler.common.entity.Store;
 import com.example.excluzscheduler.common.entity.StoreRanking;
-import com.example.excluzscheduler.common.entity.StoreRevenue;
-import com.example.excluzscheduler.common.entity.StoreSettlement;
 import com.example.excluzscheduler.domain.store.store.repository.StoreRepository;
 import com.example.excluzscheduler.domain.store.storeRanking.dto.response.StoreRankingTop10ResponseDto;
 import com.example.excluzscheduler.domain.store.storeRanking.repository.StoreRankingRepository;
@@ -38,7 +36,7 @@ public class StoreRankingService {
 	 * 2. 매출이 동일하지 않은 이후 스토어가 있는 경우, (동일한 등수 + 동일한 스토어의 수) 만큼의 등수를 얻는다 -> 1등이 2개면, 다음 등수는 3등 처리
 	 */
 	@Transactional
-	public void updateDailyStoreRankings(
+	public void updateStoreRankings(
 		RevenuePeriod rankingPeriod, LocalDateTime startDateTime, LocalDateTime endDateTime
 	) {
 		log.info("🔍 매출 기준 TOP10 가져오는 중...");
@@ -115,7 +113,7 @@ public class StoreRankingService {
 	// TOP 10 랭킹 조회 (매출 정보 제외)
 	@Transactional(readOnly = true)
 	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings() {
-		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.MINUTE_1, PageRequest.of(0, 10))
+		return storeRankingRepository.findTop10ByRankingPeriod(RevenuePeriod.MONTH, PageRequest.of(0, 10))
 			.getContent()
 			.stream()
 			.map(ranking -> new StoreRankingTop10ResponseDto(
