@@ -22,23 +22,56 @@ public class StoreScheduler {
     private final StoreRankingService storeRankingService;
     private final StoreSettlementService storeSettlementService;
 
-    @Scheduled(fixedDelay = 30000) // 로직 작업 끝나고 30초 뒤 로직 돌아감
-
-    public void scheduleStore() {
-
+    private void executeScheduler(RevenuePeriod revenuePeriod) {
         LocalDateTime nowDatetime = LocalDateTime.now();
-        RevenuePeriod revenuePeriod = RevenuePeriod.MINUTE_1; // 테스트할 기간 선택
-
         LocalDateTime startDatetime = revenuePeriod.getStartDatetime(nowDatetime);
         LocalDateTime endDatetime = revenuePeriod.getEndDatetime(nowDatetime);
 
-        log.info("start store scheduler");
+        log.info("🖍️ {} 스케줄러 시작", revenuePeriod);
 
         storeRevenueService.createRevenue(revenuePeriod, startDatetime, endDatetime);
-        storeRankingService.updateDailyStoreRankings(revenuePeriod, startDatetime, endDatetime);
-        storeSettlementService.createSettlement(revenuePeriod, startDatetime, endDatetime); // TODO 테스트 이후 월별 정산으로 매개변수 변경 필요
+        storeRankingService.updateStoreRankings(revenuePeriod, startDatetime, endDatetime);
 
-        log.info("finish store scheduler");
+        if (revenuePeriod == RevenuePeriod.MONTH) {
+            storeSettlementService.createSettlement(revenuePeriod, startDatetime, endDatetime);
+        }
+
+        log.info("🟢 {} 스케줄러 끝", revenuePeriod);
     }
 
+    // 실시간
+    @Scheduled(fixedDelay = 60000)
+    public void scheduleRealTimeRevenueUpdate() {
+
+        LocalDateTime nowDatetime = LocalDateTime.now();
+        RevenuePeriod revenuePeriod = RevenuePeriod.DAY; // 테스트할 기간 선택
+
+        LocalDateTime startDatetime = revenuePeriod.getStartDatetime(nowDatetime).plusDays(1); // 당일
+        LocalDateTime endDatetime = revenuePeriod.getEndDatetime(nowDatetime).plusDays(1); // 내일
+
+        log.info("🖍️ 실시간 스케줄러 시작");
+
+        storeRevenueService.createRevenue(revenuePeriod, startDatetime, endDatetime);
+        storeRankingService.updateStoreRankings(revenuePeriod, startDatetime, endDatetime);
+
+        log.info("🟢 실시간 스케줄러 끝");
+    }
+
+    // 일간 - 사용자가 사용하지 않는 시간에 돌도록 하기
+    @Scheduled(cron = "0 0 3 * * *") // 매 새벽 3시
+    public void scheduleDailyRevenueUpdate() {
+        executeScheduler(RevenuePeriod.DAY);
+    }
+
+    // 월간
+    @Scheduled(cron = "0 0 3 1 * *") // 매월 1일 새벽 3시
+    public void scheduleMonthlyRevenueUpdate() {
+        executeScheduler(RevenuePeriod.MONTH);
+    }
+
+    // 연간
+    @Scheduled(cron = "0 0 3 1 1 *") // 매년 1월 1일 새벽 3시
+    public void scheduleYearlyRevenueUpdate() {
+        executeScheduler(RevenuePeriod.YEAR);
+    }
 }
