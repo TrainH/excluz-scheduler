@@ -67,4 +67,4 @@ jobs:
             sleep 30
             
             # 9090 포트에서 Java 애플리케이션 시작
-            nohup java -jar ~/*.jar --server.port=9090 > ~/app_9090.log 2>&1 &
+            nohup java -jar $(ls -t ~/excluz-scheduler*.jar | head -n 1) --server.port=9090 > ~/app_9090.log 2>&1 &
