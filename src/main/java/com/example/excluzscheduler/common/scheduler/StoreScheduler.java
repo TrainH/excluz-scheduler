@@ -49,7 +49,7 @@ public class StoreScheduler {
         int hour = nowDatetime.getHour();
         int minute = nowDatetime.getMinute();
 
-        // 새벽 3시 0분 ~ 3시 20분 사이에는 실행하지 않음
+        // 새벽 3시 0분 ~ 3시 30분 사이에는 실행하지 않음
         if (SchedulerSkipTime.REAL_TIME_SKIP.isWithinSkipRange(hour, minute)) {
             log.info("🕒 새벽 {}시 {}분 ~ {}분 사이에는 실시간 스케줄러를 실행하지 않습니다.",
                 SchedulerSkipTime.REAL_TIME_SKIP.getSkipHour(),
