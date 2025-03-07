@@ -7,7 +7,7 @@ public enum SchedulerSkipTime {
     REAL_TIME_SKIP(
         3,  // SKIP_HOUR: 새벽 3시
         0,  // SKIP_MINUTE_START: 0분
-        20  // SKIP_MINUTE_END: 20분
+        30  // SKIP_MINUTE_END: 30분
     );
 
     private final int skipHour;
