@@ -27,7 +27,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@EntityListeners(AuditingEntityListener.class) // @LastModifiedDate는 Spring Data JPA의 AuditingEntityListener를 활성화해야 적용됨
+//  @LastModifiedDate는 Spring Data JPA의 AuditingEntityListener를 활성화해야 적용됨
+@EntityListeners(AuditingEntityListener.class) // '마지막 수정 시간'을 자동으로 기록
 @Table(name="store_rankings")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StoreRanking {
@@ -48,12 +49,12 @@ public class StoreRanking {
 	)
 	private Store store;
 
-	// 매출 타입 (D, M, Y)
+	// 매출 타입 (DAY, MONTH, YEAR)
 	@Comment("매출 타입")
 	@Enumerated(EnumType.STRING)
 	private RevenuePeriod rankingPeriod;
 
-	// 랭킹 날짜
+	// 랭킹 날짜 (랭킹 기준 시작 날짜)
 	@LastModifiedDate
 	@Column(name = "rank_date", nullable = false)
 	private LocalDateTime rankDate;
@@ -71,7 +72,7 @@ public class StoreRanking {
 	public StoreRanking(Store store, RevenuePeriod rankingPeriod, Integer rankPosition, Long revenue) {
 		this.store = store;
 		this.rankingPeriod = rankingPeriod;
-		this.rankDate = LocalDateTime.now();
+		this.rankDate = LocalDateTime.now(); // 생성 or 업데이트 시간 기록
 		this.rankPosition = rankPosition;
 		this.revenue = revenue;
 	}
@@ -80,6 +81,6 @@ public class StoreRanking {
 	public void updateRank(Integer rankPosition, Long revenue) {
 		this.rankPosition = rankPosition;
 		this.revenue = revenue;
-		this.rankDate = LocalDateTime.now();
+		this.rankDate = LocalDateTime.now(); // 생성 or 업데이트 시간 기록
 	}
 }

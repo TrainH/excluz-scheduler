@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.excluzscheduler.common.entity.Store;
 import com.example.excluzscheduler.common.entity.StoreRanking;
 import com.example.excluzscheduler.domain.store.store.repository.StoreRepository;
-import com.example.excluzscheduler.domain.store.storeRanking.dto.response.StoreRankingTop10ResponseDto;
 import com.example.excluzscheduler.domain.store.storeRanking.repository.StoreRankingRepository;
 import com.example.excluzscheduler.domain.store.storeRevenue.enums.RevenuePeriod;
 import com.example.excluzscheduler.domain.store.storeRevenue.repository.StoreRevenueRepository;
@@ -30,7 +29,7 @@ public class StoreRankingService {
 	private final StoreRankingRepository storeRankingRepository;
 	private final StoreRepository storeRepository;
 
-	// 매일 자정마다 실행되는 스케줄러 (TOP 10 랭킹 업데이트)
+	// 랭킹 업데이트
 	/**
 	 * 1. 매출이 동일할 경우 동일한 등수로 표시
 	 * 2. 매출이 동일하지 않은 이후 스토어가 있는 경우, (동일한 등수 + 동일한 스토어의 수) 만큼의 등수를 얻는다 -> 1등이 2개면, 다음 등수는 3등 처리
@@ -50,7 +49,7 @@ public class StoreRankingService {
 		}
 
 		// 기존 랭킹 데이터 조회 및 Map 변환 (N+1 방지)
-		List<StoreRanking> existingRankings = storeRankingRepository.findByRankingPeriod(rankingPeriod, PageRequest.of(0, 1000)).getContent();
+		List<StoreRanking> existingRankings = storeRankingRepository.findAllByRankingPeriod(rankingPeriod, PageRequest.of(0, 1000)).getContent();
 		Map<Integer, StoreRanking> rankingMap = existingRankings.stream()
 			.collect(Collectors.toMap(ranking -> ranking.getStore().getId(), Function.identity()));
 
@@ -108,18 +107,5 @@ public class StoreRankingService {
 		storeRankingRepository.saveAll(newRankings);
 
 		log.info("✅ 매출 기준 TOP10 가져오기 완료!");
-	}
-
-	// TOP 10 랭킹 조회 (매출 정보 제외)
-	@Transactional(readOnly = true)
-	public List<StoreRankingTop10ResponseDto> getTop10StoreRankings(RevenuePeriod period) {
-		return storeRankingRepository.findTop10ByRankingPeriod(period, PageRequest.of(0, 10))
-			.getContent()
-			.stream()
-			.map(ranking -> new StoreRankingTop10ResponseDto(
-				ranking.getStore().getId(),
-				ranking.getStore().getStoreName(),
-				ranking.getRankPosition()))
-			.collect(Collectors.toList());
 	}
 }
